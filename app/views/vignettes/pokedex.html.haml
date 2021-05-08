@@ -1,0 +1,227 @@
+/ MODULE 4 - POKEDEX
+.ui.centered.grid
+  .ten.wide.column
+    .panel
+      %form.form
+        .ui.icon.input.fluid
+          %i.search.icon
+          %input{name: "id", type:"number", placeholder: "Pokemon ID", value: 1}
+      / DO NOT MODIFY ANY LINE ABOVE THIS
+      
+      / YOUR SOLUTION HERE
+      .ui.fluid.raised.card
+        .image
+          .ui.two.column.grid
+            .column
+              .ui.segment
+                %img.ui.small.pic.load{"data-query":"sprites.other.dream_world.front_default", "data-input":"src"}
+            .column
+              .ui.segment
+                %img.ui.small.pic.load{"data-query":"sprites.other.official-artwork.front_default", "data-input":"src"}
+        .colored.content
+          .ui.small.feed
+            .event
+              .content
+                .header
+                  %h4
+                    %span.left.floated.name.load{"data-query":"name", "data-treatment":"capitalize"} 
+                  %h5  
+                    %span.right.floated lbs
+                    %span.right.floated.name.load{"data-query":"weight", "data-input":"html"}
+            .event  
+              .content
+                .meta
+                  %span.left.floated.type1.load{"data-query":"types.0.type.name", "data-treatment":"allcaps"}
+                  %span.left.floated.type2.load{"data-query":"types.1.type.name", "data-treatment":"allcaps"}
+              .content  
+                .meta
+                  %span.right.floated.type1.load{"data-query":"types.type.url.damage_relations.double_damage_to.0.name", "data-treatment":"allcaps"}
+                  %span.right.floated.type2.load{"data-query":"types.type.damage_relations.double_damage_to.0.name", "data-treatment":"allcaps"}
+                  %span.centered X2 DMG TO:
+                  .ui.breadcrumb
+                    %span.right.floated.section 
+                    .section.supereffective1 Unknown
+                    .icon.divider /
+                    %span.right.floated.section 
+                    .section.supereffective2 Unknown
+                    .icon.divider /
+                    .active.section 
+                    .section.supereffective3 Unknown
+                  /need to do, find out what it's strong against      
+              
+        .content
+          %h5 STATS
+          .ui.small.feed
+            .event  
+              .content              
+                .hp
+                  %span.left.floated.hp.load{"data-query":"stats.0.stat.name", "data-treatment":"allcaps"}
+                  %span.hpstat.load.right.floated{"data-query":"stats.0.base_stat", "data-treatment":"html"}
+            .event  
+              .content   
+                .attack  
+                  %span.left.floated.attack.load{"data-query":"stats.1.stat.name", "data-treatment":"allcaps"}
+                  %span.right.floated.attackstat.load{"data-query":"stats.1.base_stat", "data-input":"html"}
+            .event  
+              .content     
+                .defense  
+                  %span.left.floated.defense.load{"data-query":"stats.2.stat.name", "data-treatment":"allcaps"}
+                  %span.right.floated.defensestat.load{"data-query":"stats.2.base_stat", "data-input":"html"}
+            .event  
+              .content   
+                .sattack  
+                  %span.left.floated.sattack.load{"data-query":"stats.3.stat.name", "data-treatment":"allcaps"}
+                  %span.right.floated.sattckstat.load{"data-query":"stats.3.base_stat", "data-input":"html"}
+            .event 
+              .content   
+                .sdefense  
+                  %span.left.floated.sdefense.load{"data-query":"stats.4.stat.name", "data-treatment":"allcaps"}
+                  %span.right.floated.sdefensestat.load{"data-query":"stats.4.base_stat", "data-input":"html"}
+        .extra.content
+          %span.left.floated #
+          %span.left.floated.name.load{"data-query":"id", "data-input":"html"}
+          .ui.breadcrumb.right.floated
+            %span.right.floated.section
+            %span.section Location: 
+            %span.section.location1 Unknown
+            .icon.divider /
+            %span.section.location2 Unknown
+            
+              
+          /Need to do here where to find said pokemon        
+
+/ DO NOT MODIFY ANYTHING BELOW THESE LINES
+/ ----------------------------------
+:coffeescript
+  POKEDEX_URL= "https://pokeapi.co/api/v2/pokemon/"
+  
+  $ ->
+    grabPokedex(1) # default load
+    
+    # BIND FORM SUBMISSION BEHAVIOR TO POKEDEX CALL
+    $("form").submit (event)->
+      event.preventDefault()
+      data = $(this).serializeArray()
+      data =_.object(_.pluck(data, "name"), _.pluck(data, "value"))
+      grabPokedex(data.id)
+      return false
+  
+  capitalize = (str)->
+    str.charAt(0).toUpperCase()+str.slice(1)
+  
+<<<<<<< HEAD
+  lastColor = ""
+  LastPriLocation = ""
+  LastSecLocation = ""
+  LastPriType = ""
+  LastSecType = ""
+  LastPriEffective = ""
+  LastSecEffective = ""
+  LastTriEffective = ""
+  
+  
+=======
+>>>>>>> 3d15d35a7c199ba08e72aaf81f4918e6a0d73964
+  window.grabPokedex = (id)->
+    $.getJSON POKEDEX_URL+id, (resp)->
+      LocationsAPI = resp.location_area_encounters
+      DMGtypesAPI = resp.types[0].type.url
+      TypeColor = resp.types[0].type.name
+      resp["color"] = TypeColor
+      $.getJSON DMGtypesAPI, (resp3)->
+        PriEffective = resp3.damage_relations.double_damage_to[0].name
+        SecEffective = resp3.damage_relations.double_damage_to[1].name
+        TriEffective = resp3.damage_relations.double_damage_to[2].name
+        resp["PrimaryE"] = PriEffective
+        resp["SecondayE"] = SecEffective
+        resp["ThirdE"] = TriEffective
+        $(".supereffective1").html(PriEffective)
+        $(".supereffective2").html(SecEffective)
+        $(".supereffective3").html(TriEffective)
+        
+      $.getJSON LocationsAPI, (resp2)->
+        Primary_Loc = resp2[0].location_area.name
+        Secondary_Loc = resp2[1].location_area.name
+        resp["primary_location"] = Primary_Loc
+        resp["secondary_location"] = Secondary_Loc
+        $(".location1").html(Primary_Loc)
+        $(".location2").html(Secondary_Loc)
+        # Processing primary api point
+      
+      switch TypeColor
+          when 'grass'
+            resp["color"] = "green";
+            lastColor = resp["color"]
+            console.log("\t",lastColor)
+          when 'fire'
+            resp["color"] = "red";
+            lastColor = resp["color"]
+            
+      
+      _.each $(".load"), (el)->
+        # GRAB PROPERTIES SPECIFIED IN HAML
+        query = $(el).data("query")
+        input = $(el).data("input")
+        treatment = $(el).data("treatment")
+        if _.isUndefined(query) then return
+       
+        # RESOLVE QUERY TO JSON VALUE
+        # console.log("\t THIS IS BEFORE", query)
+        query = query.split(".")
+        # console.log("\t THIS IS AFTER", query)
+        result = resp
+        corrupt = false
+        _.each query, (key)->
+          if result[key]
+            result = result[key]
+          else
+            corrupt = true
+        if corrupt
+          return
+          
+        switch treatment
+          when "capitalize"
+            result = result.charAt(0).toUpperCase()+result.slice(1)
+          when "allcaps"
+            result = result.toUpperCase()
+        
+        # HOW TO HANDLE THE JSON VALUE
+        switch input
+          when "html"
+            $(el).html(result)
+          when "src"
+            $(el).attr("src", result)
+          when "background-color"
+            $(el).removeClass(lastColor)
+            $(el).addClass(result)
+            lastColor = result
+          else
+            $(el).html(result)
+            
+      console.log "API RESPONSE", resp
+      console.log(lastColor)
+:scss
+  .panel{
+    margin-top: 60px;
+  }
+  .stat.label{
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+  .stat:not(.label){
+    float: right;
+  }
+<<<<<<< HEAD
+  .colored.content{
+    background-color: eval(lastColor) !important;
+  }
+  .green{
+    background: green;
+    color: white;
+  }
+  .red{
+    background: red;
+    color: white;
+  }
+=======
+>>>>>>> 3d15d35a7c199ba08e72aaf81f4918e6a0d73964
